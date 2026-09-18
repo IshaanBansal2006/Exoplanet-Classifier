@@ -9,7 +9,7 @@
 # Made and edited by Ishaan Bansal
 
 # Import packages
-get_ipython().run_line_magic('matplotlib', 'inline')
+# matplotlib inline magic dropped: this file runs as a script, not in a kernel
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -166,10 +166,10 @@ df.shape
 def clean_dataset(df):
     assert isinstance(df, pd.DataFrame), "df needs to be a pd.DataFrame"
     df.dropna(inplace=True)
-    indices_to_keep = ~df.isin([np.nan, np.inf, -np.inf]).any(1)
+    indices_to_keep = ~df.isin([np.nan, np.inf, -np.inf]).any(axis=1)
     return df[indices_to_keep].astype(np.float64)
 
-clean_dataset(df)
+df = clean_dataset(df)
 
 
 # In[201]:
@@ -181,10 +181,10 @@ def evaluation(y_true, y_pred):
     
 # Print Accuracy, Recall, F1 Score, and Precision metrics.
     print('Evaluation Metrics:')
-    print('Accuracy: ' + str(metrics.accuracy_score(y_test, y_pred)))
-    print('Recall: ' + str(metrics.recall_score(y_test, y_pred)))
-    print('F1 Score: ' + str(metrics.f1_score(y_test, y_pred)))
-    print('Precision: ' + str(metrics.precision_score(y_test, y_pred)))
+    print('Accuracy: ' + str(metrics.accuracy_score(y_true, y_pred)))
+    print('Recall: ' + str(metrics.recall_score(y_true, y_pred)))
+    print('F1 Score: ' + str(metrics.f1_score(y_true, y_pred)))
+    print('Precision: ' + str(metrics.precision_score(y_true, y_pred)))
     
 # Print Confusion Matrix
     print('\nConfusion Matrix:')
@@ -215,7 +215,7 @@ X_train, X_test, y_train, y_test = train_test_split(features, target, random_sta
 
 # Checking if train test split ran correclty
 for dataset in [y_train, y_test]:
-    print(round(len(dataset)/len(target_1), 2))
+    print(round(len(dataset)/len(target), 2))
 
 
 # ## Models
@@ -254,7 +254,7 @@ evaluation(y_test, y_pred)
 # In[172]:
 
 
-tree = DecisionTreeClassifier()
+tree = DecisionTreeClassifier(random_state=1)
 
 # Fitting Model to the train set
 tree.fit(X_train, y_train)
@@ -270,7 +270,7 @@ evaluation(y_test, y_pred)
 
 
 # Instantiate model
-forest = RandomForestClassifier(n_estimators=100, criterion='gini')
+forest = RandomForestClassifier(n_estimators=100, criterion='gini', random_state=1)
 # Fitting Model to the train set
 forest.fit(X_train, y_train)
 # Predicting on the test set
